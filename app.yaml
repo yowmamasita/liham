@@ -3,7 +3,7 @@ version: baseline
 
 runtime: python27
 api_version: 1
-threadsafe: yes 
+threadsafe: yes
 
 default_expiration: 1h
 
@@ -46,4 +46,4 @@ handlers:
 # Main script
 - url: .*
   script: main.main_app
-  login: required
+  login: optional
