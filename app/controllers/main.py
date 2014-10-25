@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from ferris import Controller, messages, route_with
 from app.models.object import Object
+from google.appengine.api import app_identity
 import json
 
 
@@ -12,7 +13,7 @@ class Main(Controller):
 
     @route_with('/')
     def index(self):
-        pass
+        self.context['app_id'] = app_identity.get_application_id()
 
     @route_with('/<key>', methods=['GET'])
     def api_get(self, key):
