@@ -1,0 +1,48 @@
+#!/usr/bin/python2
+import pip
+import argparse
+import os
+import shutil
+import zipfile
+import tarfile
+
+
+def pip_install(package):
+    pip.main(['install', '--ignore-installed', '--download=./packages/'] + package)
+
+
+def package_converter():
+    package_dir = "packages"
+    package_dir_path = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), package_dir))
+    for filename in os.listdir(package_dir_path):
+        if filename.endswith((".tar.gz")):
+            fname = './' + filename[:-7]
+            tarname = fname + '.tar.gz'
+            zipname = fname + '.zip'
+            tgz2zip(tarname, zipname)
+            # os.remove(tarname)
+        elif filename.endswith((".whl")):
+            fname = './packages/' + filename
+            shutil.copyfile(fname, fname[:-4] + '.zip')
+
+
+def tgz2zip(tarname, zipname):
+    tar_file = tarfile.open(tarname, 'r:gz')
+    zip_file = zipfile.ZipFile(zipname, 'w')
+    for tarinfo in tar_file.getmembers():
+        infile = tar_file.extractfile(tarinfo)
+        if infile:
+            fname = infile.name.split('/', 1)[1]
+            zip_file.writestr(fname, infile.fileobj.read())
+    tar_file.close()
+    zip_file.close()
+
+parser = argparse.ArgumentParser(description='Ferris pip wrapper')
+parser.add_argument('package', metavar='pkg_name', type=str, nargs='+',
+                    help='name of the package to install')
+
+args = parser.parse_args()
+
+pip_install(args.package)
+package_converter()
