@@ -1,4 +1,5 @@
 from ferris import BasicModel, ndb
+import binascii
 
 
 class Object(BasicModel):
@@ -8,8 +9,8 @@ class Object(BasicModel):
 
     @classmethod
     def create(cls, k, v):
-        cls(id=k, name=k, content=v).put()
+        cls(id=binascii.crc32(k), name=k, content=v).put()
 
     @classmethod
-    def get(cls, k, v):
-        return ndb.Key(cls, k).get()
+    def get(cls, k):
+        return ndb.Key(cls, binascii.crc32(k)).get()
